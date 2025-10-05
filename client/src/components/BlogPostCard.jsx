@@ -42,7 +42,9 @@ const BlogPostCard = ({ post }) => {
       <div className="p-6 bg-gray-900 flex flex-col flex-1 justify-between">
         {/* Top section: Title + Tags */}
         <div>
-          <div className="font-bold text-2xl mb-2 leading-tight">{post.title}</div>
+          <div className="font-bold text-2xl mb-2 leading-tight">
+            {post.title}
+          </div>
 
           {tagsArray.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">

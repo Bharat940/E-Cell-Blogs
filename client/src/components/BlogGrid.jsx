@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import BlogPostCard from "./BlogPostCard.jsx";
+import SkeletonCard from "./SkeletonCard.jsx";
 import { fetchBlogs } from "../api/blogs.js";
 import { Link } from "react-router-dom";
 
 const BlogGrid = ({ showAll = true }) => {
   const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadBlogs = async () => {
@@ -19,6 +21,8 @@ const BlogGrid = ({ showAll = true }) => {
       } catch (err) {
         console.error(err);
         alert("Failed to load blogs");
+      } finally {
+        setLoading(false);
       }
     };
     loadBlogs();
@@ -28,12 +32,16 @@ const BlogGrid = ({ showAll = true }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {displayedBlogs.map((post) => (
-        <BlogPostCard key={post._id} post={post} />
-      ))}
+      {loading
+        ? Array.from({ length: showAll ? 6 : 3 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))
+        : displayedBlogs.map((post) => (
+            <BlogPostCard key={post._id} post={post} />
+          ))}
 
       {/* Show "See All Blogs" button if only showing latest 3 */}
-      {!showAll && blogs.length > 3 && (
+      {!loading && !showAll && blogs.length > 3 && (
         <div className="col-span-full flex justify-center mt-8">
           <Link
             to="/blogs"
