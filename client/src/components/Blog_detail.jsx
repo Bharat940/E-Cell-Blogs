@@ -8,7 +8,6 @@ export default function BlogDetail() {
   const [post, setPost] = useState(null);
   const [sidebarBlogs, setSidebarBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const topRef = useRef(null);
 
   useEffect(() => {
@@ -26,6 +25,7 @@ export default function BlogDetail() {
     try {
       const res = await fetchBlogs();
       const allBlogs = res.data;
+
       const blog = allBlogs.find((b) => b._id === id);
       setPost(blog);
 
@@ -50,12 +50,14 @@ export default function BlogDetail() {
   if (loading) {
     return <BlogDetailSkeleton />;
   }
-  if (!post)
+
+  if (!post) {
     return (
       <div className="min-h-screen bg-[#0a0a2a] text-white flex items-center justify-center">
-        <p className="text-xl">No Blog Created.</p>
+        <p className="text-xl">No Blog Found.</p>
       </div>
     );
+  }
 
   const tagsArray = Array.isArray(post.tags)
     ? post.tags
@@ -76,7 +78,7 @@ export default function BlogDetail() {
     >
       {/* Breadcrumb */}
       <div className="text-sm text-gray-400 mb-4">
-        <Link to="/" className="hover:underline">
+        <Link to="https://ecellrgpv.com/" className="hover:underline">
           Home
         </Link>
         /
@@ -87,12 +89,11 @@ export default function BlogDetail() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Main Blog */}
         <div className="lg:col-span-3 bg-[#1a1a3a] p-6 rounded-lg space-y-6">
           <img
             src={post.image || "/placeholder.png"}
             alt={post.title}
-            className="w-full aspect-[16/9] object-cover rounded-lg"
+            className="w-full aspect-[16/9] object-cover rounded-lg shadow-md"
           />
           <h1 className="text-3xl font-bold">{post.title}</h1>
           <p className="text-gray-400 text-sm">{formattedDate}</p>
@@ -105,7 +106,7 @@ export default function BlogDetail() {
 
         {/* Sidebar */}
         <div className="lg:col-span-1 flex flex-col gap-4">
-          <div className="bg-[#10103a] p-4 rounded-lg shadow-md">
+          <div className="bg-[#10103a] p-4 rounded-lg shadow-md order-2 lg:order-1">
             <h3 className="text-lg font-semibold mb-3">Latest Articles</h3>
             {sidebarBlogs.map((blog) => {
               const blogDate = new Date(
@@ -120,26 +121,26 @@ export default function BlogDetail() {
                 <Link
                   key={blog._id}
                   to={`/blog/${blog._id}`}
-                  className="flex flex-col cursor-pointer hover:bg-[#202050] p-2 rounded transition-colors mb-2"
+                  className="flex items-center gap-3 cursor-pointer hover:bg-[#202050] p-2 rounded transition-all mb-2"
                 >
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={blog.image || "/placeholder.png"}
-                      alt={blog.title}
-                      className="w-12 h-12 rounded-md object-cover"
-                    />
-                    <div>
-                      <p className="text-sm font-medium">{blog.title}</p>
-                      <p className="text-xs text-gray-400">{blogDate}</p>
-                    </div>
+                  <img
+                    src={blog.image || "/placeholder.png"}
+                    alt={blog.title}
+                    className="w-12 h-12 rounded-md object-cover"
+                  />
+                  <div>
+                    <p className="text-sm font-medium">{blog.title}</p>
+                    <p className="text-xs text-gray-400">{blogDate}</p>
                   </div>
                 </Link>
               );
             })}
           </div>
-          <div className="bg-[#10103a] p-4 rounded-lg shadow-md">
+
+          {/* Tags */}
+          <div className="bg-[#10103a] p-4 rounded-lg shadow-md order-1 lg:order-2">
             <h3 className="text-lg font-semibold mb-3">Tags</h3>
-            {tagsArray.length > 0 && (
+            {tagsArray.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {tagsArray.map((tag, i) => (
                   <span
@@ -150,6 +151,8 @@ export default function BlogDetail() {
                   </span>
                 ))}
               </div>
+            ) : (
+              <p className="text-gray-400 text-sm">No tags available.</p>
             )}
           </div>
         </div>
